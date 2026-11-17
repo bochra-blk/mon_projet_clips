@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Plant Diagnostic – Plantes & Maladies</title>
+
+<style>
+/* ===== GLOBAL ===== */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: linear-gradient(135deg, #eef5f0, #f8fbf9);
+  color: #2c3e50;
+}
+
+/* ===== TITRE ===== */
+h1 {
+  text-align: center;
+  margin: 40px 20px 20px;
+  font-size: 2.5rem;
+  color: #3b4f2c;
+}
+
+/* ===== GRID ===== */
+.plants-grid {
+  max-width: 1200px;
+  margin: 0 auto 60px;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+/* ===== CARD ===== */
+.plant-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border-radius: 24px;
+  padding: 25px 20px 30px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.plant-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(114, 160, 92, 0.15),
+    transparent
+  );
+  opacity: 0;
+  transition: opacity 0.35s;
+}
+
+.plant-card:hover::before {
+  opacity: 1;
+}
+
+.plant-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12);
+}
+
+/* ===== IMAGE ===== */
+.plant-card img {
+  display: block;
+  margin: 0 auto 15px;
+  width: 130px;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 50%;
+  background: #f1f6f2;
+  padding: 8px;
+  border: 3px solid #6fae5e;
+}
+
+/* ===== TITRE PLANTE ===== */
+.plant-card h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #2f6b3c;
+  font-size: 1.4rem;
+}
+
+/* ===== LISTE MALADIES ===== */
+.plant-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.plant-card ul li {
+  background: linear-gradient(135deg, #f2faf4, #e8f4ec);
+  padding: 14px 16px;
+  border-radius: 14px;
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* Nom maladie */
+.plant-card ul li b {
+  color: #2f7a4a;
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* Conseil */
+.plant-card ul li i {
+  color: #5f6f64;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  .plant-card img {
+    width: 110px;
+    height: 110px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<h1>🌿 Plantes & Maladies</h1>
+
+<div class="plants-grid" id="plantsGrid"></div>
+
+<script>
+fetch("/api/knowledge")
+  .then(res => res.json())
+  .then(plantes => {
+    const grid = document.getElementById("plantsGrid");
+
+    plantes.forEach(plante => {
+      const div = document.createElement("div");
+      div.classList.add("plant-card");
+      div.innerHTML = `
+        <img src="${plante.image}" alt="${plante.nom}">
+        <h2>${plante.nom}</h2>
+        <ul>
+          ${plante.maladies.map(m =>
+            `<li>
+              <b>${m.name}</b>
+              <i>${m.advice}</i>
+            </li>`
+          ).join("")}
+        </ul>
+      `;
+      grid.appendChild(div);
+    });
+  });
+</script>
+
+</body>
+</html>

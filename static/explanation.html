@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Explication du Diagnostic</title>
+
+<style>
+body {
+    font-family: "Poppins", sans-serif;
+    background: #f4f7f6;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+.circle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.2;
+    animation: float 6s ease-in-out infinite;
+    z-index: 0;
+}
+@keyframes float {
+    0%,100% { transform: translateY(0) translateX(0); }
+    50% { transform: translateY(-20px) translateX(20px); }
+}
+.container {
+    background: #fff;
+    width: 92%;
+    max-width: 950px;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0px 10px 25px rgba(0,0,0,0.1);
+    animation: fadeIn 0.8s ease;
+    position: relative;
+    z-index: 2;
+}
+@keyframes fadeIn {
+    from { opacity:0; transform:translateY(30px);}
+    to { opacity:1; transform:translateY(0);}
+}
+.title {
+    font-size: 30px;
+    font-weight: 700;
+    color:#57633b;
+    margin-bottom: 10px;
+}
+.section {
+    background:#f0f5ec;
+    border-left: 5px solid #57633b;
+    padding: 18px;
+    border-radius: 12px;
+    margin-top: 18px;
+}
+.section h3 {
+    margin: 0 0 8px 0;
+    color:#2c3b20;
+}
+.badge {
+    display:inline-block;
+    padding:6px 12px;
+    border-radius:8px;
+    font-weight:600;
+}
+.danger-low { background:#d7f3d2; color:#2d5a2b; }
+.danger-medium { background:#fff3b0; color:#7a6200; }
+.danger-high { background:#ffd6d6; color:#7a0000; }
+.back-btn {
+    display:block;
+    width: fit-content;
+    margin: 25px auto 0;
+    padding: 12px 25px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 18px;
+    transition: 0.3s;
+    color: white;
+    background:#57633b;
+}
+.back-btn:hover { opacity:0.9; }
+</style>
+</head>
+
+<body>
+
+<div class="container" id="expBox"></div>
+
+<script>
+const explanations = {
+
+    // --- Already existing diseases only ---
+
+    "Xylella fastidiosa": {
+        description:
+`Bactérie dangereuse affectant principalement l'olivier et d'autres plantes.
+Elle bloque la circulation de la sève et provoque un dessèchement progressif.`,
+        symptoms:
+`• Feuilles brûlées sur les bords  
+• Jaunissement et dessèchement progressif  
+• Dépérissement des branches`,
+        reasoning:
+`Le diagnostic a été confirmé car la combinaison des symptômes sélectionnés
+correspond au modèle défini dans la base de connaissances du système (system_auto.clp)
+pour cette maladie.`,
+        danger: "Élevé — forte capacité de propagation à d’autres plantes et cultures"
+    },
+
+    "Spilocaea oleaginea": {
+        description:
+`Champignon responsable de l'œil de paon chez l'olivier.`,
+        symptoms:
+`• Taches circulaires sombres sur les feuilles  
+• Chute progressive des feuilles  
+• Feuillage affaibli`,
+        reasoning:
+`Le système a identifié cette maladie en raison de la présence caractéristique
+des taches circulaires et de la chute répétée des feuilles.`,
+        danger: "Moyen — affecte l’arbre mais propagation modérée"
+    },
+
+    "Graphiola phoenicis": {
+        description:
+`Maladie fongique touchant principalement le palmier dattier.`,
+        symptoms:
+`• Petites pustules noires sur les feuilles  
+• Déformation du limbe foliaire`,
+        reasoning:
+`Les symptômes sélectionnés correspondent aux règles de diagnostic définies
+dans le système expert.`,
+        danger: "Faible — principalement esthétique mais à surveiller"
+    },
+
+    "Fusariose du collet": {
+        description:
+`Champignon affectant la base de la tige et les racines.`,
+        symptoms:
+`• Flétrissement rapide de la plante  
+• Racines brunes ou nécrosées`,
+        reasoning:
+`Le système a déduit ce diagnostic car les symptômes observés
+correspondent à la règle spécifique de fusariose du collet.`,
+        danger: "Élevé — forte mortalité des plantes atteintes"
+    },
+
+    "Oïdium": {
+        description:
+`Champignon très fréquent formant une poudre blanche sur les feuilles.`,
+        symptoms:
+`• Poudre blanche visible sur la surface des feuilles  
+• Déformation des jeunes pousses`,
+        reasoning:
+`La présence de mycélium blanchâtre caractéristique valide ce diagnostic
+selon la base de connaissances.`,
+        danger: "Moyen — se propage vite mais reste contrôlable"
+    },
+
+    "Fusariose": {
+        description:
+`Maladie fongique affectant les tissus internes de la plante.`,
+        symptoms:
+`• Jaunissement rapide  
+• Flétrissement permanent malgré l’arrosage`,
+        reasoning:
+`Les symptômes signalés correspondent aux règles de détection de fusariose
+dans le système expert.`,
+        danger: "Élevé — risque important pour les cultures voisines"
+    }
+};
+
+// Get selected disease
+const params = new URLSearchParams(window.location.search);
+const disease = params.get("disease");
+
+const expBox = document.getElementById("expBox");
+
+// Decorative background circles
+function createCircles() {
+    for(let i=0;i<6;i++){
+        const c=document.createElement("div");
+        c.classList.add("circle");
+        const size=60+Math.random()*140;
+        c.style.width=size+"px";
+        c.style.height=size+"px";
+        c.style.background="#57633b";
+        c.style.left=Math.random()*90+"%";
+        c.style.top=Math.random()*90+"%";
+        document.body.appendChild(c);
+    }
+}
+createCircles();
+
+if(!disease || !explanations[disease]) {
+    expBox.innerHTML = `
+        <div class="title">Aucune explication trouvée</div>
+        <p>Cette maladie n'est pas définie dans la base de connaissances.</p>
+        <a href="index.html" class="back-btn">Retour à l'accueil</a>
+    `;
+} else {
+    const info = explanations[disease];
+
+    const dangerClass =
+        info.danger.includes("Élevé") ? "danger-high" :
+        info.danger.includes("Moyen") ? "danger-medium" :
+        "danger-low";
+
+    expBox.innerHTML = `
+        <div class="title">${disease}</div>
+
+        <div class="section">
+            <h3>📌 Description</h3>
+            <p>${info.description}</p>
+        </div>
+
+        <div class="section">
+            <h3>🩺 Symptômes utilisés dans le raisonnement</h3>
+            <p>${info.symptoms}</p>
+        </div>
+
+        <div class="section">
+            <h3>🧠 Explication du raisonnement</h3>
+            <p>${info.reasoning}</p>
+        </div>
+
+        <div class="section">
+            <h3>⚠ Niveau de danger</h3>
+            <span class="badge ${dangerClass}">${info.danger}</span>
+        </div>
+
+        <a href="javascript:history.back()" class="back-btn">
+            ⬅ Retour au résultat
+        </a>
+    `;
+}
+</script>
+
+</body>
+</html>

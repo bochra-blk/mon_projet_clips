@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Résultat du Diagnostic</title>
+<link rel="stylesheet" href="/static/style.css">
+
+<style>
+body {
+    font-family: "Poppins", sans-serif;
+    background: #f4f7f6;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+.circle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.2;
+    animation: float 6s ease-in-out infinite;
+    z-index: 0;
+}
+@keyframes float {
+    0%,100% { transform: translateY(0) translateX(0); }
+    50% { transform: translateY(-20px) translateX(20px); }
+}
+.container {
+    background: #fff;
+    width: 90%;
+    max-width: 900px;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0px 10px 25px rgba(0,0,0,0.1);
+    text-align: center;
+    animation: fadeIn 0.8s ease;
+    position: relative;
+    z-index: 2;
+}
+@keyframes fadeIn {
+    from { opacity:0; transform:translateY(30px);}
+    to { opacity:1; transform:translateY(0);}
+}
+.title {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+.image-box {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+.plant-image {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 15px;
+    border: 4px solid;
+}
+.advice-container, .not-found {
+    padding: 20px;
+    border-radius: 10px;
+    font-size: 17px;
+    line-height: 1.6;
+    margin-top: 15px;
+    text-align: left;
+    border-left: 5px solid;
+}
+.not-found {
+    text-align: center;
+    font-size: 18px;
+}
+.btn {
+    display: block;
+    width: fit-content;
+    margin: 25px auto 0;
+    padding: 12px 25px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 18px;
+    transition: 0.3s;
+    color: white;
+    border: none;
+}
+.btn:hover { opacity: 0.9; }
+
+.more-link {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 15px;
+    text-decoration: none;
+    font-weight: 600;
+}
+.more-link:hover { text-decoration: underline; }
+</style>
+</head>
+
+<body>
+
+<div class="container" id="resultBox"></div>
+
+<script>
+const diseaseImageMap = {
+    "Xylella fastidiosa": "xyllela.jpg",
+    "Spilocaea oleaginea": "spilocaea.jpg",
+    "Graphiola phoenicis": "Graphiola.jpg",
+    "Fusariose du collet": "fusariosec.jpg",
+    "Oïdium": "Oidium.jpg",
+    "Fusariose": "fusariose.jpg"
+};
+
+const params = new URLSearchParams(window.location.search);
+const found = params.get("found");
+const diagnosis = params.get("diagnosis");
+const advice = params.get("advice");
+
+const resultBox = document.getElementById("resultBox");
+
+function createCircles(count, color) {
+    requestAnimationFrame(() => {
+        const rect = resultBox.getBoundingClientRect();
+        for(let i = 0; i < count; i++){
+            const circle = document.createElement("div");
+            circle.classList.add("circle");
+            const size = 50 + Math.random() * 150;
+            circle.style.width = `${size}px`;
+            circle.style.height = `${size}px`;
+            circle.style.backgroundColor = color;
+            const topPos = rect.top + Math.random() * rect.height;
+            circle.style.top = `${topPos}px`;
+            circle.style.left = (Math.random() < 0.5) ? "5%" : "90%";
+            circle.style.animationDuration = `${4 + Math.random()*4}s`;
+            document.body.appendChild(circle);
+        }
+    });
+}
+
+if(found === "true") {
+    createCircles(6, "#57633b");
+
+    const imgFile = diseaseImageMap[diagnosis] || "no-result.png";
+
+    resultBox.innerHTML = `
+        <div class="title" style="color:#57633b;">${diagnosis}</div>
+
+        <div class="image-box">
+            <img src="/static/images/${imgFile}" class="plant-image" style="border-color:#57633b;" alt="${diagnosis}">
+        </div>
+
+        <div class="advice-container" style="background:#e8f5e9; border-color:#57633b;">
+            <strong>Conseils :</strong><br>${advice}
+
+            <!-- Know More link ONLY when disease exists -->
+            <br>
+            <a class="more-link" style="color:#57633b;"
+               href="explanation.html?disease=${encodeURIComponent(diagnosis)}">
+               ➜ En savoir plus…
+            </a>
+        </div>
+
+        <button onclick="window.location.href='index.html'" class="btn" style="background:#57633b;">
+            Retour à l'accueil
+        </button>
+    `;
+
+} else {
+    createCircles(6, "#d4b100");  
+
+    resultBox.innerHTML = `
+        <div class="title" style="color:#d4b100;">Aucun diagnostic trouvé</div>
+
+        <div class="image-box">
+            <img src="/static/images/no-result.png" class="plant-image" style="border-color:#f5e27a;" alt="Not Found">
+        </div>
+
+        <div class="not-found" style="background:#fff9c4; border-color:#d4b100; color:#8a6f00;">
+            Désolé, nous n'avons pas pu identifier la maladie.<br>
+            Veuillez consulter un spécialiste.
+        </div>
+
+        <button onclick="window.location.href='index.html'" class="btn" style="background:#d4b100;">
+            Retour à l'accueil
+        </button>
+    `;
+}
+</script>
+
+</body>
+</html>

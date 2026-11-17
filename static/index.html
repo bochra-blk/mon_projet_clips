@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Diagnostic Plantes</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<div class="page-wrapper">
+  <div class="card">
+    <div class="circle small"></div>
+    <div class="circle big"></div>
+
+    <div class="img-box">
+      <img src="/static/images/plant.png" alt="Diagnostic Plantes">
+    </div>
+
+    <div class="content">
+      <h1>🌿 Diagnostic des maladies des plantes</h1>
+      <p class="text">
+        Sélectionnez votre plante et indiquez ses symptômes pour obtenir un diagnostic rapide et des conseils adaptés.
+      </p>
+      <section class="plant-selection">
+        <div class="plant-card" data-plant="Olivier">
+          <img src="/static/images/oliv.png" alt="Olivier">
+          <div class="plant-name">Olivier</div>
+        </div>
+
+        <div class="plant-card" data-plant="Palmier">
+          <img src="/static/images/palm.png" alt="Palmier">
+          <div class="plant-name">Palmier</div>
+        </div>
+
+        <div class="plant-card" data-plant="Menthe">
+          <img src="/static/images/mint.png" alt="Menthe">
+          <div class="plant-name">Menthe</div>
+        </div>
+      </section>
+
+      <section id="symptoms-section">
+        <h2>Choisissez les symptômes :</h2>
+        <div id="symptoms"></div>
+      </section>
+      <section class="diagnostic-action">
+        <button id="diagnose-btn">Diagnostiquer</button>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const symptoms = {
+  "Olivier": [
+    "jaune-olive",
+    "seche-olive",
+    "deperissement-olive",
+    "tache-noire-olive",
+    "perte-feuilles-olive"
+  ],
+  "Palmier": [
+    "bosses-palmier",
+    "deformation-palmier",
+    "fletrissement-palmier",
+    "decoloration-collet-palmier"
+  ],
+  "Menthe": [
+    "poudre-blanche-menthe",
+    "tiges-fragiles-menthe",
+    "fletrissement-menthe",
+    "decoloration-menthe"
+  ]
+};
+let selectedPlant = localStorage.getItem("selectedPlant") || "Olivier";
+function renderSymptoms() {
+  const container = document.getElementById("symptoms");
+  container.innerHTML = "";
+
+  symptoms[selectedPlant].forEach((s, index) => {
+    container.innerHTML += `
+      <div class="symptom-row" style="animation-delay:${index * 0.1}s;">
+        <input type="checkbox" id="${s}">
+        <label for="${s}">${s}</label>
+      </div>
+    `;
+  });
+}
+function selectPlant(plant) {
+  selectedPlant = plant;
+
+  localStorage.setItem("selectedPlant", plant);
+
+  document.querySelectorAll(".plant-card").forEach(card => {
+    card.classList.remove("selected");
+    if (card.dataset.plant === plant) {
+      card.classList.add("selected");
+    }
+  });
+
+  renderSymptoms();
+}
+document.querySelectorAll(".plant-card").forEach(card => {
+  card.addEventListener("click", () => {
+    selectPlant(card.dataset.plant);
+  });
+});
+async function runDiagnostic() {
+  const selectedSymptoms = {};
+
+  symptoms[selectedPlant].forEach(s => {
+    selectedSymptoms[s] =
+      document.getElementById(s).checked ? "oui" : "non";
+  });
+
+  try {
+    const res = await fetch("/diagnostic", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        plant: selectedPlant,
+        symptoms: selectedSymptoms
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.disease && data.disease !== "Inconnu") {
+      window.location.href =
+        `result.html?found=true&diagnosis=${encodeURIComponent(data.disease)}&advice=${encodeURIComponent(data.advice)}`;
+    } else {
+      window.location.href = "result.html?found=false";
+    }
+
+  } catch (error) {
+    console.error(error);
+    window.location.href = "result.html?found=false";
+  }
+}
+
+document.getElementById("diagnose-btn")
+  .addEventListener("click", runDiagnostic);
+selectPlant(selectedPlant);
+</script>
+
+</body>
+</html>

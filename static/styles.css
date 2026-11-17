@@ -1,0 +1,117 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #f0f8ff;
+}
+
+.page-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.card {
+    display: flex; /* horizontal layout */
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    max-width: 900px;
+    position: relative;
+}
+
+/* Floating circles */
+.circle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.1;
+}
+
+.circle.small {
+    width: 100px;
+    height: 100px;
+    top: -30px;
+    left: -30px;
+    background: #4a572e;
+}
+
+.circle.big {
+    width: 200px;
+    height: 200px;
+    bottom: -50px;
+    right: -50px;
+    background: #4a572e;
+}
+
+/* Image section */
+.img-box {
+    flex: 1; /* takes half of the card */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.img-box img {
+    max-width: 300px;
+    border-radius: 20px;
+}
+
+/* Content section */
+.content {
+    flex: 1; /* takes half of the card */
+    padding-right: 40px; /* spacing between text and image */
+}
+
+.content h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #4a572e;
+}
+
+.content .text {
+    font-size: 1em;
+    margin-bottom: 20px;
+    line-height: 1.5;
+    color: #555;
+}
+
+.bottom .add {
+    padding: 12px 30px;
+    background: #4a572e;
+    border: none;
+    color: white;
+    font-size: 1em;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.bottom .add:hover {
+    background: #4a572e;
+}
+.btn.primary {
+    background: #4a572e;
+    color: #fff;
+}
+
+.btn.primary:hover {
+    background: #4a572e;
+}
+
+/* Secondary Button */
+.btn.secondary {
+    border: 2px solid #4a572e;
+    color: #4a572e;
+    background: transparent;
+}
+
+.btn.secondary:hover {
+    background: #e8f6ec;
+}

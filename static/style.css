@@ -1,0 +1,224 @@
+/* General body */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #f0f8ff;
+}
+
+/* Page wrapper */
+.page-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+}
+
+/* Horizontal card */
+.card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    max-width: 1000px;
+    width: 100%;
+    position: relative;
+}
+
+/* Decorative circles */
+.circle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.1;
+}
+
+.circle.small {
+    width: 100px;
+    height: 100px;
+    top: -30px;
+    left: -30px;
+    background: #4a572e;
+}
+
+.circle.big {
+    width: 200px;
+    height: 200px;
+    bottom: -50px;
+    right: -50px;
+    background: #4a572e;
+}
+
+/* Image box */
+.img-box {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.img-box img {
+    max-width: 300px;
+    border-radius: 20px;
+}
+
+/* Content box */
+.content {
+    flex: 1;
+    padding-right: 40px;
+}
+
+.content h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #4a572e;
+}
+
+.content .text {
+    font-size: 1em;
+    margin-bottom: 20px;
+    line-height: 1.5;
+    color: #555;
+}
+
+/* Plant selection cards */
+.plant-selection {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.plant-card {
+    width: 120px;
+    background: #fff;
+    border: 2px solid #4a572e;
+    border-radius: 15px;
+    text-align: center;
+    cursor: pointer;
+    padding: 10px;
+    transition: all 0.3s ease;
+}
+
+.plant-card img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: 5px;
+}
+
+.plant-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(46,125,50,0.3);
+}
+
+.plant-card.selected {
+    background-color: #4a572e;
+    color: white;
+    box-shadow: 0 8px 20px rgba(46,125,50,0.4);
+}
+
+/* Symptoms section */
+#symptoms-section {
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 30px;
+}
+
+#symptoms-section h2 {
+    text-align: center;
+    color: #4a572e;
+    margin-bottom: 15px;
+}
+
+/* Symptom row: checkbox left, label immediately next to it */
+.symptom-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    gap: 8px; /* small space between checkbox and label */
+}
+
+.symptom-row label {
+    font-weight: bold;
+    font-size: 16px;
+    color: #4a572e;
+    text-align: left;
+}
+
+/* Checkbox styling */
+.symptom-row input[type="checkbox"] {
+    transform: scale(1.3);
+    cursor: pointer;
+}
+
+
+/* Diagnostic button */
+.diagnostic-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+button#diagnose-btn {
+    background-color: #4a572e;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button#diagnose-btn:hover {
+    background-color: #4a572e;
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(45, 87, 44, 0.3);
+}
+
+/* Symptom animation */
+.symptom-row {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.5s forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .card {
+        flex-direction: column;
+        padding: 20px;
+    }
+    .content {
+        padding-right: 0;
+        margin-top: 20px;
+    }
+    .plant-selection {
+        justify-content: center;
+    }
+    .symptom-row {
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    .symptom-row label {
+        width: auto;
+        text-align: left;
+    }
+}
